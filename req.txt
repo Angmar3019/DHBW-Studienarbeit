@@ -1,0 +1,4 @@
+loguru==0.7.2
+numpy==1.26.3
+opencv-contrib-python==4.9.0.80
+opencv-python==4.9.0.80
