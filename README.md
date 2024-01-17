@@ -15,6 +15,5 @@ Google offers a ready-to-use image, called [aiy-maker-kit](https://github.com/go
 ### 3. Using the program
 `python3 main.py (-ht / -t)`
 
-`-ht` to recognize the coins by using hough transformation
-<br>
+`-ht` to recognize the coins by using hough transformation <br>
 `-t` to recognize the coins by using tensorflow
