@@ -6,7 +6,7 @@
 
 Since the packages for Google Coral primarily require older libraries, Google provides detailed [requirements](https://coral.ai/software/#debian-packages) for the Debain packages.
 
-#### Recomended:
+#### Recomended
 Google offers a ready-to-use image, called [aiy-maker-kit](https://github.com/google-coral/aiy-maker-kit-tools/releases/download/v20220518/aiy-maker-kit-2022-05-18.img.xz), for the Raspberry Pi suitable for use with Coral devices. All required packages and dependencies are available there, including `pyhton 3.7.3`. I would recommend to install it, because due to new packages an installation under e.g. python3.11 is almost impossible. Here you can find more information about [AIY Maker Kit](https://aiyprojects.withgoogle.com/maker/).
 
 ### 2. Install dependencies
