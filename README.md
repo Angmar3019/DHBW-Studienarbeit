@@ -38,7 +38,7 @@ If you want to use a Pi camera V3, you need at least debian bullseye, because yo
 `-l` {and path to labels}
 
 Example:
-`pyhton main.py -t model.tflite -l labels.txt`
+`pyhton main.py -t model_quant_edgetpu.tflite -l labels.txt`
 
 ### 4. Training your own model
 If you would also like to train your own model, based on your own images and parameters, you can use the following code and settings.
