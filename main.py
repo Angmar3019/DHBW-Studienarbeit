@@ -1,68 +1,120 @@
+""" DHBW-Studienarbeit - Entwicklung eines Prototyps zur Münzzählung mithilfe von Bildverarbeitung und Machine Learning
+    DHBW-Study paper  -  Development of a prototype for coin counting using image processing and machine learning
+    
+    author:  Angmar3019
+    date:    07.02.2023
+    version: 2.0.0
+    licence: GNU General Public License v3.0 
+"""
+
 import numpy as np
 import cv2 as cv
 import argparse
+import os
 
+from libcamera import controls
+from picamera2 import Picamera2
 from loguru import logger
-logger.add("main.log")
 
 from modules.hough_transformation import hough_transformation
 from modules.tensorflow import tensorflow
 
-camera_device = 0
+# If the program is executed remotely with ssh, the OpenCV window always opens on the first connected screen
+os.environ["DISPLAY"] = ":0" 
 
-# Erstellen des ArgumentParsers
-arg_desc = '''\
-    Coin detection with different methods
-    '''
+cv.startWindowThread()
+logger.add("main.log")
 
-parser = argparse.ArgumentParser(description=arg_desc)
 
-#Erstellen einer gegenseitig auschließenend Gruppe
-group = parser.add_mutually_exclusive_group(required=True)
 
-# Hinzufügen der Argumente zur Grippe
-group.add_argument("-ht", "--houghtransformation", action="store_true", help="use the hough transformation to detect the coins")
-group.add_argument("-t", "--tensorflow", action="store_true", help="use the tensorflow model to detect the coins")
+def create_args():
+    """Create arguments
+    - Allows you to pass arguments when executing the pyhton file
+    - Allows you to add the model and the labels
 
-args = vars(parser.parse_args())
+    Test:
+        - Does "--help" displays the help?
+        - Can you only use either "-ht" or "t"?
+    """
 
-cap = cv.VideoCapture(camera_device)
+    arg_desc = '''\
+        DHBW-Studienarbeit - Entwicklung eines Prototyps zur Münzzählung mithilfe von Bildverarbeitung und Machine Learning
+        DHBW-Study paper  -  Development of a prototype for coin counting using image processing and machine learning
 
-# Check if Camera can be opend
-if not cap.isOpened():
-    logger.error(f"Cannot open camera /dev/video{camera_device}")
-    exit()
+        Use "-ht" or "-t" to select the option with which method you want to recognize the coins.
+        For example, if you want to use Tensorflow, the command would look like this:
 
-while True:
-    ret, frame = cap.read()
+        python main.py -t model.tflite -l labels.txt
+        '''
 
-    # Check if a video stream is resieved
-    if not ret:
-        logger.error("Error opening the steam")
-        break
+    parser = argparse.ArgumentParser(description=arg_desc, formatter_class=argparse.RawTextHelpFormatter)
+    group = parser.add_mutually_exclusive_group(required=True)
 
-    # Check which detection method should be used
+    group.add_argument("-ht", "--houghtransformation", action="store_true", help="use the hough transformation to detect the coins")
+    group.add_argument("-t", "--tensorflow", type=str ,help="use the tensorflow model to detect the coins. Specify a tflite model that should be used")
+    parser.add_argument("-l", "--labels", type=str, help="specify a txt with the labels if you are using Tensorflow")
+
+    args = vars(parser.parse_args())
+
+    if args["tensorflow"] and not args["labels"]:
+        parser.error("A txt with the labels used in the model is required")
+
     if args["houghtransformation"]:
         window_name = "Hough Transformation"
-        value = hough_transformation(logger, cv, frame)
+        option = hough_transformation(logger)
+        return option, window_name
 
     elif args["tensorflow"]:
         window_name = "Tensorflow"
-        value = tensorflow(logger, cv, frame)
+        option = tensorflow(logger, args["tensorflow"], args["labels"])
+        return option, window_name
     else:
         logger.error("Invalid flag")
 
-    # Print current coin value in the frame
-    count_display = "Wert: " + str(value)
-    font = cv.FONT_HERSHEY_SIMPLEX
-    cv.putText(frame, count_display, (10,10), font, 1, (0,255,255), 2, cv.LINE_4)
 
-    # Display current image in the window
-    cv.imshow(window_name, frame)
 
-    # Check if close button or "q" is pressed and close abort the loop
-    if cv.waitKey(1) & 0xFF == ord("q") or cv.getWindowProperty(window_name, cv.WND_PROP_VISIBLE) < 1:
+def initialize_camera():
+    """Initialize camera
+    - Initializes the pyhton webcam, which is connected via the csi connector
+    - Sets the color space and allows the resolution to be adjusted
+    - Activates the autofocus of the camra, if available
+
+    Test:
+        - Is the live image of the camera displayed?
+        - Does the camera focus on close objects, e.g. when you hold your hand up to it
+    """
+
+    camera = Picamera2()
+    camera.configure(
+        camera.create_preview_configuration(main={
+            "format": "YUV420",
+            "size": (2304, 1296)
+        }))
+
+    camera.set_controls({"FrameRate": 60})
+    camera.set_controls({"AfMode": controls.AfModeEnum.Continuous})
+    camera.start()
+
+    return camera
+
+
+
+option, window_name = create_args()
+camera = initialize_camera()
+
+while True:
+    frame = camera.capture_array("main")
+    frame = cv.cvtColor(frame, cv.COLOR_YUV420p2RGB)
+
+    if not frame.any():
+        logger.error("Error opening the steam")
         break
 
-cap.release()
+    frame = option.detect(frame)
+
+    cv.namedWindow(window_name, cv.WINDOW_NORMAL)
+    cv.setWindowProperty(window_name, cv.WND_PROP_FULLSCREEN, cv.WINDOW_FULLSCREEN)
+
+    cv.imshow(window_name, frame)
+    
 cv.destroyAllWindows()
