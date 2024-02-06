@@ -2,8 +2,8 @@
     DHBW-Study paper  -  Development of a prototype for coin counting using image processing and machine learning
     
     author:  Angmar3019
-    date:    07.02.2023
-    version: 1.0.0
+    date:    07.02.2024
+    version: 1.0.1
     licence: GNU General Public License v3.0 
 """
 
@@ -57,6 +57,6 @@ def draw_rectangle(logger, frame, label, left, right, top, bottom):
     else:
         logger.error("Received a label that is in the wrong format or not supported")
         exit()
- 
+
     cv.rectangle(frame, (int(left), int(top)), (int(right), int(bottom)), (0, 255, 0), 2)
     cv.putText(frame, label, (int(left), int(top) - 10), font, 0.5, (255, 255, 255), 2)
