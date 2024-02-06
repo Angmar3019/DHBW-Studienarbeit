@@ -29,16 +29,19 @@ If you want to use a Pi camera V3, you need at least debian bullseye, because yo
 `sudo apt install python3-opencv python3-numpy python3-picamera2 libcamera-apps`
 
 ### 3. Using the program
-`python3 main.py (-ht / -t and -l)`
+`python3 main.py (-ht and -c / -t and -l)`
 
 `-ht` to recognize the coins by using hough transformation <br>
 `-t` to recognize the coins by using tensorflow<br>
 
+`-c` for calibrating the millimetre-pixel ratio with a 20 cent coin<br>
 `-t` {and path to model}<br>
 `-l` {and path to labels}
 
-Example:
-`pyhton main.py -t model_quant_edgetpu.tflite -l labels.txt`
+Example with tensorflow:<br>`pyhton main.py -t model_quant_edgetpu.tflite -l labels.txt`
+
+or with hough-transformation:<br>
+`pyhton main.py -ht`
 
 ### 4. Training your own model
 If you would also like to train your own model, based on your own images and parameters, you can use the following code and settings.
