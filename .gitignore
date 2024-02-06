@@ -1,3 +1,4 @@
+mm_per_pixel.txt
 *.log
 .venv
 __pycache__
