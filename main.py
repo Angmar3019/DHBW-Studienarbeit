@@ -2,8 +2,8 @@
     DHBW-Study paper  -  Development of a prototype for coin counting using image processing and machine learning
     
     author:  Angmar3019
-    date:    07.02.2023
-    version: 2.0.0
+    date:    07.02.2024
+    version: 3.0.0
     licence: GNU General Public License v3.0 
 """
 
@@ -50,7 +50,9 @@ def create_args():
     parser = argparse.ArgumentParser(description=arg_desc, formatter_class=argparse.RawTextHelpFormatter)
     group = parser.add_mutually_exclusive_group(required=True)
 
-    group.add_argument("-ht", "--houghtransformation", action="store_true", help="use the hough transformation to detect the coins")
+    group.add_argument("-ht", "--houghtransformation", action="store_true", help="use the Hough-Transformation to detect the coins")
+    parser.add_argument("-c", "--calibrate", action="store_true", help="for calibrating the millimetre-pixel ratio with a 20 cent coin")
+
     group.add_argument("-t", "--tensorflow", type=str ,help="use the tensorflow model to detect the coins. Specify a tflite model that should be used")
     parser.add_argument("-l", "--labels", type=str, help="specify a txt with the labels if you are using Tensorflow")
 
@@ -59,15 +61,24 @@ def create_args():
     if args["tensorflow"] and not args["labels"]:
         parser.error("A txt with the labels used in the model is required")
 
+    if args["calibrate"] and args["houghtransformation"]:
+        window_name = "Hough Transformation calibration"
+        calibrate = True
+        option = hough_transformation(logger, calibrate)
+        return option, calibrate, window_name
+
     if args["houghtransformation"]:
         window_name = "Hough Transformation"
-        option = hough_transformation(logger)
-        return option, window_name
+        calibrate = False
+        option = hough_transformation(logger, calibrate)
+        return option, calibrate, window_name
 
     elif args["tensorflow"]:
         window_name = "Tensorflow"
+        calibrate = False
         option = tensorflow(logger, args["tensorflow"], args["labels"])
-        return option, window_name
+        return option, calibrate, window_name
+    
     else:
         logger.error("Invalid flag")
 
@@ -91,7 +102,7 @@ def initialize_camera():
             "size": (2304, 1296)
         }))
 
-    camera.set_controls({"FrameRate": 60})
+    camera.set_controls({"FrameRate": 10})
     camera.set_controls({"AfMode": controls.AfModeEnum.Continuous})
     camera.start()
 
@@ -99,7 +110,7 @@ def initialize_camera():
 
 
 
-option, window_name = create_args()
+option, calibrate, window_name = create_args()
 camera = initialize_camera()
 
 while True:
@@ -109,8 +120,11 @@ while True:
     if not frame.any():
         logger.error("Error opening the steam")
         break
-
-    frame = option.detect(frame)
+    
+    if calibrate:
+        frame =  option.calibrate(frame)
+    else:
+        frame = option.detect(frame)
 
     cv.namedWindow(window_name, cv.WINDOW_NORMAL)
     cv.setWindowProperty(window_name, cv.WND_PROP_FULLSCREEN, cv.WINDOW_FULLSCREEN)
