@@ -2,11 +2,12 @@
     DHBW-Study paper  -  Development of a prototype for coin counting using image processing and machine learning
     
     author:  Angmar3019
-    date:    07.02.2023
-    version: 1.0.0
+    date:    07.02.2024
+    version: 1.1.0
     licence: GNU General Public License v3.0 
 """
 
+import sys
 import cv2 as cv
 import numpy as np
 import modules.gui as gui
@@ -18,9 +19,10 @@ from tflite_runtime.interpreter import Interpreter
 
 class tensorflow:
     def __init__(self, logger, model_path, labels_path):
-        """Display value
-        - Writes the total recognized value of the coins in the image
-        - Converts from cents to full euros
+        """Initialisation of tensorflow detection
+        - Initilaize EdgeTPU library
+        - Configures the EdgeTPU interpreter
+        - Imports the label file with the labels used in the model
 
         Args:
             - logger:           Contains the global logger variable
@@ -40,13 +42,20 @@ class tensorflow:
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()       
 
-        with open(labels_path, 'r') as f:
-            self.labels = [line.strip() for line in f.readlines()]
+        try:
+            with open(labels_path, 'r') as f:
+                self.labels = [line.strip() for line in f.readlines()]
+                self.logger.info(f"Imported labels {self.labels} from {labels_path}")
+
+        except FileNotFoundError:
+            self.logger.error(f"{labels_path} not found")
+            cv.destroyAllWindows()
+            sys.exit(0)
 
 
 
     def preprocess(self, frame):
-        """Preprocess the image
+        """Preprocessing of theframe for the recognition methodon method
         - Changes the size of the image to that of the model
         - Converts the image into the int8 format required by the EdgeTPU and the model
 
@@ -73,7 +82,7 @@ class tensorflow:
             - frame (array):    Contains the image of the webcam as an array for opencv
 
         Test:
-            - Is the value of the coins displayed at the top left of the image?
+            - Is the correct value of the coins displayed at the top left of the image?
             - Is there a rectangular box around the recognized coins?
         """
 
