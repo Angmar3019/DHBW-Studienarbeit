@@ -1,0 +1,36 @@
+item {
+  id: 0
+  name: "background"
+}
+item {
+  id: 1
+  name: "1"
+}
+item {
+  id: 2
+  name: "10"
+}
+item {
+  id: 3
+  name: "100"
+}
+item {
+  id: 4
+  name: "2"
+}
+item {
+  id: 5
+  name: "20"
+}
+item {
+  id: 6
+  name: "200"
+}
+item {
+  id: 7
+  name: "5"
+}
+item {
+  id: 8
+  name: "50"
+}
