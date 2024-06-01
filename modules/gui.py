@@ -53,7 +53,7 @@ def draw_rectangle(logger, frame, label, left, right, top, bottom):
     if int(label) <= 50:
         label = str(label) + " Cent"
     elif 100 <= int(label) <= 200:
-        label = str(int(label) / 100) + " Euro"
+        label = str(int(int(label) / 100)) + " Euro"
     else:
         logger.error("Received a label that is in the wrong format or not supported")
         exit()
