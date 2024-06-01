@@ -3,7 +3,7 @@
     
     author:  Angmar3019
     date:    01.06.2024
-    version: 2.0.0
+    version: 3.0.0
     licence: GNU General Public License v3.0 
 """
 

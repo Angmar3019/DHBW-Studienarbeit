@@ -2,7 +2,7 @@
     DHBW-Study paper  -  Development of a prototype for coin counting using image processing and machine learning
     
     author:  Angmar3019
-    date:    07.02.2024
+    date:    01.06.2024
     version: 3.0.0
     licence: GNU General Public License v3.0 
 """
