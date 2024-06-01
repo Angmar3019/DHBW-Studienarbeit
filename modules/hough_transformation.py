@@ -171,10 +171,11 @@ class hough_transformation:
                 top = max(center_y - radius, 0)
                 bottom = min(center_y + radius, frame.shape[0])
 
-                value = value + self.radius_to_value(radius)
+                label = self.radius_to_value(radius)
 
-                gui.draw_rectangle(self.logger, frame, value, left, right, top, bottom)
-        
+                gui.draw_rectangle(self.logger, frame, label, left, right, top, bottom)
+                value = value + int(label)
+
         gui.display_value(frame, value)
 
         return frame
