@@ -26,7 +26,7 @@ If you want to use a Pi camera V3, you need at least debian bullseye, because yo
 ### 2. Install dependencies
 `pip install -r req.txt`
 
-`sudo apt install python3-opencv python3-numpy python3-picamera2 libcamera-apps`
+`sudo apt install python3-opencv python3-numpy python3-picamera2 libcamera-apps i2c-tools python3-smbus`
 
 ### 3. Using the program
 `python3 main.py (-ht and -c / -t and -l)`
