@@ -8,11 +8,13 @@
 """
 
 import cv2 as cv
+from RPLCD.i2c import CharLCD
+
 font = cv.FONT_HERSHEY_SIMPLEX
 
 
 
-def display_value(frame, value):
+def display_value(frame, value, ammount):
     """Display value
     - Writes the total recognized value of the coins in the image
     - Converts from cents to full euros
@@ -26,8 +28,17 @@ def display_value(frame, value):
         - Is the value displayed in whole euros and not in cents?
     """
 
-    value = "Wert: " + str(value / 100) + " Euro"
+    value = "Value: " + str(value / 100) + " Euro"
+    ammount = "Ammount: " + str(ammount) + " Coins"
+
     cv.putText(frame, value, (50,50), font , 1, (0,255,0), 2, cv.LINE_4)
+    cv.putText(frame, ammount, (50,100), font , 1, (0,255,0), 2, cv.LINE_4)
+
+    lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2, dotsize=8)
+    lcd.clear()
+    lcd.write_string(value)
+    lcd.cursor_pos = (1, 0)
+    lcd.write_string(ammount)
 
 
 
