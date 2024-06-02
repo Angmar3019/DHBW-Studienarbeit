@@ -98,6 +98,7 @@ class tensorflow:
 
         detection_threshold = 0.2
         value = 0
+        ammount =0
         
         for i in range(len(scores)):
             if scores[i] > detection_threshold:
@@ -113,7 +114,8 @@ class tensorflow:
                 gui.draw_rectangle(self.logger, frame, label, left, right, top, bottom)
                 
                 value = value + int(label)
+                ammount = ammount +1
 
-        gui.display_value(frame, value)
+        gui.display_value(frame, value, ammount)
         
         return frame

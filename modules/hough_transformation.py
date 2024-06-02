@@ -144,6 +144,8 @@ class hough_transformation:
         """
 
         value = 0
+        ammount=0
+
         frame_processed = self.preprocess(frame)
 
         circles = cv.HoughCircles(frame_processed, cv.HOUGH_GRADIENT, dp=1,
@@ -174,9 +176,11 @@ class hough_transformation:
                 label = self.radius_to_value(radius)
 
                 gui.draw_rectangle(self.logger, frame, label, left, right, top, bottom)
-                value = value + int(label)
 
-        gui.display_value(frame, value)
+                value = value + int(label)
+                ammount = ammount +1
+
+        gui.display_value(frame, value, ammount)
 
         return frame
 
