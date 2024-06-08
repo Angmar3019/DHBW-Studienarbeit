@@ -4,5 +4,6 @@ numpy
 utils
 RPLCD
 smbus2
+screeninfo
 tflite-runtime==2.5.0
 tflite_support==0.4.3
