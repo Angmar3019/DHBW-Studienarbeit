@@ -12,6 +12,7 @@ import cv2 as cv
 import numpy as np
 import modules.gui as gui
 import time
+from RPLCD.i2c import CharLCD
 
 
 
@@ -201,13 +202,22 @@ class hough_transformation:
             - Check whether the average millimetre-pixel ratio is written to mm_per_pixel.txt
         """
         
+        lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2, dotsize=8)
+        
+        if not self.is_calibrating:
+            lcd.clear()
+            lcd.write_string("Place a 20 cent coin in the area")
+        elif self.is_calibrating and not (time.time() - self.calibration_start_time >= 5):
+            lcd.clear()
+            lcd.write_string("5. Second timer Please wait")
+
         frame_processed = self.preprocess(frame)
         circles = cv.HoughCircles(frame_processed, cv.HOUGH_GRADIENT, dp=1,
                                   minDist=1000, param1=50, param2=30, minRadius=10, maxRadius=1000)
 
         height, width = frame.shape[:2]
         rectangle_center = (width // 2, height // 2)
-        rectangle_size = (500, 500)  
+        rectangle_size = (300, 300)  
         left_top = (rectangle_center[0] - rectangle_size[0] // 2, rectangle_center[1] - rectangle_size[1] // 2)
         right_bottom = (rectangle_center[0] + rectangle_size[0] // 2, rectangle_center[1] + rectangle_size[1] // 2)
 
@@ -227,9 +237,18 @@ class hough_transformation:
                         self.calibration_start_time = time.time()
                         self.logger.info("20 cent coin fully within the area. Waiting 5 seconds before starting radius measurements")
 
+                        lcd.clear()
+                        lcd.write_string("Coin detected   Starting Timer")
+
         if self.is_calibrating and (time.time() - self.calibration_start_time >= 5):
             if len(self.radii_pixels) < 10:
                 self.radii_pixels.append(radius)
+
+                lcd.clear()
+                lcd.write_string(f"{len(self.radii_pixels)}. captured")
+                lcd.cursor_pos = (1, 0)
+                lcd.write_string(f"radius: {radius} px")
+
                 self.logger.info(f"{len(self.radii_pixels)}. captured radius: {radius} pixels.")
 
             if len(self.radii_pixels) == 10:
@@ -244,6 +263,9 @@ class hough_transformation:
                     self.logger.error(f"Error while writing mm_per_pixel.txt")
                     cv.destroyAllWindows()
                     sys.exit(0)
+
+                lcd.clear()
+                lcd.write_string(f"Average mm-pixelvalue: {round(mm_per_pixel, 2)}")
 
                 self.logger.info(f"The calculated average mm per pixel value is {mm_per_pixel} and was written to mm_per_pixel.txt")
                 cv.destroyAllWindows()
