@@ -145,7 +145,7 @@ class hough_transformation:
         """
 
         value = 0
-        ammount=0
+        amount=0
 
         frame_processed = self.preprocess(frame)
 
@@ -179,9 +179,9 @@ class hough_transformation:
                 gui.draw_rectangle(self.logger, frame, label, left, right, top, bottom)
 
                 value = value + int(label)
-                ammount = ammount +1
+                amount = amount +1
 
-        gui.display_value(frame, value, ammount)
+        gui.display_value(frame, value, amount)
 
         return frame
 

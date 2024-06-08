@@ -14,7 +14,7 @@ font = cv.FONT_HERSHEY_SIMPLEX
 
 
 
-def display_value(frame, value, ammount):
+def display_value(frame, value, amount):
     """Display value
     - Writes the total recognized value of the coins in the image
     - Converts from cents to full euros
@@ -22,25 +22,25 @@ def display_value(frame, value, ammount):
     Args:
         - frame (array):    Contains the image of the webcam as an array for opencv
         - value (int):      Contains the total value of the recognized coins in cents
-        - ammount (int):    Contains the total ammount of the recognized coins
+        - amount (int):    Contains the total amount of the recognized coins
 
     Test:
         - Is the value of the coins displayed at the top left of the image?
         - Is the value displayed in whole euros and not in cents in the frame and on the display?
-        - Ist the ammount displayed in the frame and on the display?
+        - Ist the amount displayed in the frame and on the display?
     """
 
     value = "Value: " + str(value / 100) + " Euro"
-    ammount = "Ammount: " + str(ammount) + " Coins"
+    amount = "amount: " + str(amount) + " Coins"
 
     cv.putText(frame, value, (50,50), font , 1, (0,255,0), 2, cv.LINE_4)
-    cv.putText(frame, ammount, (50,100), font , 1, (0,255,0), 2, cv.LINE_4)
+    cv.putText(frame, amount, (50,100), font , 1, (0,255,0), 2, cv.LINE_4)
 
     lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2, dotsize=8)
     lcd.clear()
     lcd.write_string(value)
     lcd.cursor_pos = (1, 0)
-    lcd.write_string(ammount)
+    lcd.write_string(amount)
 
 
 
