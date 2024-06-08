@@ -22,10 +22,12 @@ def display_value(frame, value, ammount):
     Args:
         - frame (array):    Contains the image of the webcam as an array for opencv
         - value (int):      Contains the total value of the recognized coins in cents
+        - ammount (int):    Contains the total ammount of the recognized coins
 
     Test:
         - Is the value of the coins displayed at the top left of the image?
-        - Is the value displayed in whole euros and not in cents?
+        - Is the value displayed in whole euros and not in cents in the frame and on the display?
+        - Ist the ammount displayed in the frame and on the display?
     """
 
     value = "Value: " + str(value / 100) + " Euro"
