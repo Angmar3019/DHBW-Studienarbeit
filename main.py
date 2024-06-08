@@ -14,6 +14,7 @@ import os
 
 from libcamera import controls
 from picamera2 import Picamera2
+from screeninfo import get_monitors
 from loguru import logger
 
 from modules.hough_transformation import hough_transformation
@@ -21,6 +22,8 @@ from modules.tensorflow import tensorflow
 
 # If the program is executed remotely with ssh, the OpenCV window always opens on the first connected screen
 os.environ["DISPLAY"] = ":0" 
+screen = get_monitors()[0]
+
 
 cv.startWindowThread()
 logger.add("main.log")
@@ -127,6 +130,7 @@ while True:
         frame = option.detect(frame)
 
     cv.namedWindow(window_name, cv.WINDOW_NORMAL)
+    cv.resizeWindow(window_name, screen.height, screen.width) 
     cv.setWindowProperty(window_name, cv.WND_PROP_FULLSCREEN, cv.WINDOW_FULLSCREEN)
 
     cv.imshow(window_name, frame)
