@@ -31,7 +31,7 @@ def display_value(frame, value, amount):
     """
 
     value = "Value: " + str(value / 100) + " Euro"
-    amount = "amount: " + str(amount) + " Coins"
+    amount = "Amount: " + str(amount) + " Coins"
 
     cv.putText(frame, value, (50,50), font , 1, (0,255,0), 2, cv.LINE_4)
     cv.putText(frame, amount, (50,100), font , 1, (0,255,0), 2, cv.LINE_4)
