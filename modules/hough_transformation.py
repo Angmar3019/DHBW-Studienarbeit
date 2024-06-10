@@ -78,7 +78,7 @@ class hough_transformation:
             - Comment out various steps and see how the frame changes
         """
 
-        frame = cv.convertScaleAbs(frame, alpha=1, beta=50)
+        frame = cv.convertScaleAbs(frame, alpha=1, beta=25)
         frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
         frame = cv.GaussianBlur(frame, (9, 9), 2)
